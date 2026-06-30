@@ -3,8 +3,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import pytest
-from sim.Team import Team
-from sim.Match import expectedScore, simulateMustWin, simulatePossibleDraw
+from sim.team import Team
+from sim.match import expectedScore, simulateMustWin, simulatePossibleDraw
 
 argentina = Team("AR", "Argentina", 2148)
 panama = Team("PA", "Panama", 1700)
