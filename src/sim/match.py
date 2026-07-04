@@ -36,7 +36,6 @@ def simulatePossibleDraw(teamA,teamB):
     is possible.
     """
     chanceA = expectedScore(teamA.rating, teamB.rating)
-    chanceB = 1 - chanceA
 
     #Closeness is higher the closer an team is at 50% chance to win
     closeness = 1 - abs(chanceA - 0.5) * 2
