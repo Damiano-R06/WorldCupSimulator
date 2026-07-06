@@ -8,6 +8,7 @@ Writes results to data/rankings.json.
 
 import json
 import requests
+import sys
 from datafc import eloratings
 
 URL = "https://www.eloratings.net/World.tsv"
@@ -58,4 +59,32 @@ def fetchRankings(selected_codes, code_map):
             "rating": int(cols[3]),
         })
     return rankings
+
+def validateSelection(selected_codes, code_map):
+    """
+    Validates that exactly 48 teams were selected and
+    that all codes exist in the eloratings code map.
+    Aborts with a clear message if either check fails.
+    """
+    unknown = [code for code in selected_codes if code not in code_map]
+    if unknown:
+        print(f"Error: {len(unknown)} unknown team code(s): {unknown}")
+        print("Check your teams.json for typos.")
+        sys.exit(1)
+
+ 
+    if len(selected_codes) != 48:
+        print(f"Error: Expected 48 teams, got {len(selected_codes)}.")
+        print("Check your teams.json and make sure exactly 48 teams are selected.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    selected = loadSelectedCodes()
+    code_map = buildCodeMap()
+    validateSelection(selected, code_map)
+    data = fetchRankings(selected,code_map)
+
+    with open ("data/rankings/json", "w") as f:
+        json.dump(data, f, indent=2)
+    
 
