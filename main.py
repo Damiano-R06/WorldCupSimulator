@@ -129,6 +129,7 @@ def saveTeamsJson(mode, teams_data):
     """
     Writes the user's selection to data/teams.json.
     """
+    os.makedirs("data", exist_ok=True)
     if mode == "random":
         data = {"mode": "random", "teams": teams_data}
     else:
