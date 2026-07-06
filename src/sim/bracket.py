@@ -212,10 +212,6 @@ def simulateBracket(teams):
     for round_name in rounds:
         teams, results = simulateKnockOutRound(teams, round_name)
         all_results.extend(results)
-        print(f"\n--- {round_name} ---")
-        for r in results:
-            print(f"  {r['winner'].name} def. {r['loser'].name}")
 
     champion = teams[0]
-    print(f"\n🏆 Champion: {champion.name}")
     return champion, all_results

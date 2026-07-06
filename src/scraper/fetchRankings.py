@@ -15,12 +15,29 @@ URL = "https://www.eloratings.net/World.tsv"
 
 def buildCodeMap():
     """
-    Gets the offical code map from eloratings.net.
-    Returns a plain dict.
+    Builds code → name map directly from World.tsv so only
+    actively ranked teams are considered valid.
+    Enriches with full names from the eloratings reference table.
     """
+    response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"})
+    response.raise_for_status()
+
+    live_codes = set()
+    for line in response.text.strip().split("\n"):
+        cols = line.split("\t")
+        if len(cols) < 4:
+            continue
+        live_codes.add(cols[2])
 
     df = eloratings.country_codes_data()
-    return dict(zip(df["country_codes"], df["country_names"]))
+    name_lookup = dict(zip(df["country_code"], df["country_name"]))
+
+    code_map = {
+        code: name_lookup.get(code, code)
+        for code in live_codes
+    }
+
+    return code_map
 
 def loadSelectedCodes(path="data/teams.json"):
 
@@ -84,7 +101,7 @@ if __name__ == "__main__":
     validateSelection(selected, code_map)
     data = fetchRankings(selected,code_map)
 
-    with open ("data/rankings/json", "w") as f:
+    with open ("data/rankings.json", "w") as f:
         json.dump(data, f, indent=2)
     
 
