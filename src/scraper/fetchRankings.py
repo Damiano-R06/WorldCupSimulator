@@ -13,21 +13,31 @@ from datafc import eloratings
 
 URL = "https://www.eloratings.net/World.tsv"
 
-def buildCodeMap():
+def fetchTSV():
     """
-    Builds code → name map directly from World.tsv so only
-    actively ranked teams are considered valid.
-    Enriches with full names from the eloratings reference table.
+    Fetches World.tsv from eloratings.net. This file stores
+    all the data about the teams.
     """
+
     response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"})
     response.raise_for_status()
+    rows = []
 
-    live_codes = set()
     for line in response.text.strip().split("\n"):
         cols = line.split("\t")
         if len(cols) < 4:
             continue
-        live_codes.add(cols[2])
+        rows.append(cols)
+    return rows
+
+
+def buildCodeMap(rows):
+    """
+    Builds code name map directly from World.tsv so only
+    actively ranked teams are considered valid.
+    Enriches with full names from the eloratings reference table.
+    """
+    live_codes = {cols[2] for cols in rows}
 
     df = eloratings.country_codes_data()
     name_lookup = dict(zip(df["country_code"], df["country_name"]))
@@ -49,24 +59,15 @@ def loadSelectedCodes(path="data/teams.json"):
     else:
         return {code for codes in data["groups"].values() for code in codes}
     
-def fetchRankings(selected_codes, code_map):
+def fetchRankings(selected_codes, code_map, rows):
     """
     Gets World.tsv and returns only teams whose codes
     are selected.
     """
 
-    response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"})
-    response.raise_for_status()
-
     rankings = []
-    for line in response.text.strip().split("\n"):
-        cols = line.split("\t")
-
-        if len(cols) < 4:
-            continue
-
+    for cols in rows:
         code = cols[2]
-
         if code not in selected_codes:
             continue
         rankings.append({

@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from sim.team import Team
 from sim.tournament import runTournament
 from scraper.fetchRankings import (
+    fetchTSV,
     buildCodeMap,
     loadSelectedCodes,
     fetchRankings,
@@ -47,7 +48,6 @@ def selectNumberSims():
     """
     while True:
         try:
-
             choice = int(input("\nHow many simulations would you like to run? "))
             if choice > 0:
                 return choice
@@ -221,7 +221,8 @@ def main():
     else:
         mode = selectMode()
     
-    code_map = buildCodeMap()
+    worldTSV = fetchTSV()
+    code_map = buildCodeMap(worldTSV)
 
     if not existing:
         if mode == "random":
@@ -232,7 +233,7 @@ def main():
 
     selected = loadSelectedCodes("data/teams.json")
     validateSelection(selected, code_map)
-    rankings = fetchRankings(selected, code_map)
+    rankings = fetchRankings(selected, code_map, worldTSV)
 
     with open("data/rankings.json", "w") as f:
         json.dump(rankings, f, indent=2)
