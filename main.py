@@ -29,15 +29,17 @@ def selectMode():
 
     print("\n=== World Cup Simulator == \n")
     print("How would you like to assign groups?\n")
-    print("1 --> RANDOM\n2 --> MANUAL")
+    print("1 --> RANDOM\n2 --> MANUAL\n3 --> 2026WC Format")
 
     while True:
-        choice = input("\nEnter 1 or 2: ")
+        choice = input("\nEnter 1, 2 or 3: ")
 
         if choice == "1":
             return "random"
         elif choice == "2":
             return "manual"
+        elif choice == "3":
+            return "2026WC"
         else:
             print("Invalid input, enter 1 or 2.\n")
 
@@ -82,7 +84,7 @@ def selectTeamsRandom(code_map):
             print("Team already selcted")
             continue
         selected.append(code)
-    print("48/48 Selected")
+    print("48/48 Teams Selected")
     return selected
 
 def selectManual(code_map):
@@ -92,7 +94,7 @@ def selectManual(code_map):
     """
 
     print("\nYou will assign 4 teams to each of 12 groups (A through L).\n")
-    print("Enter LIST for a list of valid team names")
+    print("Enter LIST for a list of valid team names, (e.g. AR, BR, FR)")
     
     groups = {}
     group_names = [chr(65+i) for i in range(12)]
@@ -129,7 +131,6 @@ def saveTeamsJson(mode, teams_data):
     """
     Writes the user's selection to data/teams.json.
     """
-    os.makedirs("data", exist_ok=True)
     if mode == "random":
         data = {"mode": "random", "teams": teams_data}
     else:
@@ -195,7 +196,7 @@ def checkExistingTeams():
     print("\nFound a previous tournament setup:")
     print(f"  Mode: {data['mode']}")
     print(f"  Teams: {', '.join(teams)} ({len(teams)} total)")
-    print("\nWould you like to reuse tis setup?")
+    print("\nWould you like to reuse this setup?")
     print("  1. Yes — reuse saved log")
     print("  2. No — pick new log")
 
@@ -224,15 +225,24 @@ def main():
     worldTSV = fetchTSV()
     code_map = buildCodeMap(worldTSV)
 
-    if not existing:
+    if mode == "2026WC":
+        with open("data/teamsWC2026.json") as f:
+            data = json.load(f)
+        selected = loadSelectedCodes("data/teamsWC2026.json")
+        validateSelection(selected, code_map)
+
+    elif not existing: 
         if mode == "random":
             teams_data = selectTeamsRandom(code_map)
         else:
             teams_data = selectManual(code_map)
         data = saveTeamsJson(mode, teams_data)
-
-    selected = loadSelectedCodes("data/teams.json")
-    validateSelection(selected, code_map)
+        selected = loadSelectedCodes("data/teams.json")
+        validateSelection(selected, code_map)
+    else:
+        selected = loadSelectedCodes("data/teams.json")
+        validateSelection(selected, code_map)
+    
     rankings = fetchRankings(selected, code_map, worldTSV)
 
     with open("data/rankings.json", "w") as f:

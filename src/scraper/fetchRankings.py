@@ -19,7 +19,7 @@ def fetchTSV():
     all the data about the teams.
     """
 
-    response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"})
+    response = requests.get(URL, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     response.raise_for_status()
     rows = []
 
