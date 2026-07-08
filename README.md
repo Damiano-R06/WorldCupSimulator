@@ -31,7 +31,7 @@ A Python-based simulator for the 2026 FIFA World Cup format. It pulls live team 
 ### Installation
 
 ```bash
-git clone https://github.com/your-username/WorldCupSimulator.git
+git clone https://github.com/Damiano-R06/WorldCupSimulator.git
 cd WorldCupSimulator
 pip install requests
 ```
@@ -52,19 +52,21 @@ You'll be prompted to:
 Results are printed as a sorted table showing each team's win count and win percentage.
 
 ## Project Structure
+```text
 WorldCupSimulator/
-├── main.py                       
+├── main.py
 ├── src/
 │   ├── scraper/
-│   │   └── fetchRankings.py 
+│   │   └── fetchRankings.py
 │   └── sim/
-│       ├── team.py          
-│       ├── match.py         
-│       ├── bracket.py       
-│       └── tournament.py    
+│       ├── team.py
+│       ├── match.py
+│       ├── bracket.py
+│       └── tournament.py
 └── tests/
-    ├── test_bracket.py 
-    └── test_match.py         
+    ├── test_bracket.py
+    └── test_match.py
+```        
 
 ## Running Tests
 
