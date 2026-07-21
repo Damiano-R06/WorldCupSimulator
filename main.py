@@ -29,7 +29,7 @@ def selectMode():
 
     print("\n=== World Cup Simulator == \n")
     print("How would you like to assign groups?\n")
-    print("1 --> RANDOM\n2 --> MANUAL\n3 --> 2026WC Format")
+    print("1 --> RANDOM\n2 --> MANUAL\n3 --> 2026WC Teams")
 
     while True:
         choice = input("\nEnter 1, 2 or 3: ")
